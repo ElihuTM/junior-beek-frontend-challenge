@@ -38,7 +38,6 @@ module.exports = {
           'sass-loader',
         ],
       },
-      /*
       {
         test: /\.(png|gif|jpg)$/,
         use: [
@@ -50,7 +49,6 @@ module.exports = {
           },
         ],
       },
-      */
     ],
   },
   plugins: [
