@@ -1,8 +1,13 @@
 @import "./Vars.scss";
 @import "./components/Header.scss";
 @import "./components/BookItem.scss";
+@import "./components/AudioContentDescription.scss";
 @import "../../../node_modules/bootstrap/scss/bootstrap.scss";
 
 ::-webkit-scrollbar {
   display: none;
+}
+
+.grey-color {
+  color: $grey-color;
 }

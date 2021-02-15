@@ -1,15 +1,16 @@
-import { useState, useEffect } from 'react'
+import {useState, useEffect} from 'react'
 
 const useInitialState = (API_URL, CONFIG) => {
-    const [audioBooks, setAudioBooks] = useState({done: false, list: {}})
+    const [audioContent, setAudioContent] = useState(false)
   
     useEffect(() => {
       fetch(API_URL, CONFIG)
         .then((response) => response.json())
-        .then((data) => setAudioBooks({done: true, list: data}));
+        .catch(error => console.error(error))
+        .then((data) => setAudioContent(data))
     }, [])
   
-    return audioBooks
+    return [audioContent, setAudioContent]
   }
   
   export default useInitialState

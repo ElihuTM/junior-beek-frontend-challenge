@@ -1,44 +1,26 @@
 import React from 'react'
 import Header from '../components/Header'
-import BookItem from '../components/BookItem'
-import BookContainer from '../components/BookContainer'
-import AddBook from '../components/AddBook'
+import AudioContentContainer from '../components/AudioContentContainer'
+import AddAudioContent from '../components/add-audio-content-form/AddAudioContent'
 import useInitialState from '../hooks/useInitialState'
-
-const API_TOKEN = 'CFPAT-LBtveUvtDi7YjAhsyNzZURthngcrVnIr53eOZjYnxuc'
-const SPACE_ID = '1t4hjzo7y0kb'
-const ENVIRONMENT = 'master'
-const CONTENT_TYPE_ID = 'audiocontent-v19'
-
-const API_URL = `https://api.contentful.com/spaces/${SPACE_ID}/environments/${ENVIRONMENT}/entries?select=fields,sys.id,sys.version&locale=es-MX&content_type=${CONTENT_TYPE_ID}`
-const API_CONFIG = {
-    "method":"GET",
-    "headers": {
-        "Authorization" : `Bearer ${API_TOKEN}`
-    }
-}
+import APIConfig from '../hooks/APIConfig'
 
 const App = () => {
-    const initialState = useInitialState(API_URL, API_CONFIG)
+    const apiConfig = new APIConfig()
 
+    const [audioContents, setAudioContents] = useInitialState(
+        apiConfig.RETRIEVE_API_URL, 
+        apiConfig.getRetrieveAPIConfig()
+    )
+    
     return (
         <div className='App'>
             <Header />
-            
             <div>
-                <AddBook />
+                <AddAudioContent audioContents={audioContents} setAudioContents={setAudioContents}/>
             </div>
             <hr />
-            <main className='container'>
-                <BookContainer >
-                    {initialState.done
-                    ? (
-                            initialState.list.items.map((book, id) => <BookItem key={book.sys.id} {...book}/>)
-                    ) : (
-                        <h1>Cargando resultados...</h1>
-                    )}
-                </BookContainer>
-            </main>
+            <AudioContentContainer audioContents={audioContents} />
         </div>
     )
 }
