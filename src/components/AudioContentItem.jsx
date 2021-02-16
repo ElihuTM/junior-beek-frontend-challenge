@@ -1,26 +1,30 @@
 import React from 'react'
-import AudioContentDescription from './AudioContentDescription'
+import AudioContentDescription from '../containers/AudioContentDescription'
+import shortid from 'shortid'
 
-const AudioContentItem = (audioContent) => (
+const AudioContentItem = ({idx, deleteAudioContent, book}) => (
     <tr>
-        <td > {audioContent.idx} </td>
-        <td > {audioContent.fields.title['es-MX']} </td>
+        <td > {idx} </td>
+        <td > {book.fields.title['es-MX']} </td>
         <td >
             <ul >
-                {audioContent.fields.authors['es-MX'].map(
-                    author => <li key={author}> {author} </li>
+                {book.fields.authors['es-MX'].map(
+                    author => <li key={shortid.generate()}> {author} </li>
                 )}
             </ul>
         </td>
         <td >
             <ul>
-                {audioContent.fields.narrators['es-MX'].map(
-                    narrator => <li key={narrator}> {narrator} </li>
+                {book.fields.narrators['es-MX'].map(
+                    narrator => <li key={shortid.generate()}> {narrator} </li>
                 )}
             </ul>
         </td>
         <td>
-            <AudioContentDescription {...audioContent}/>
+            <AudioContentDescription 
+                book={book}
+                deleteAudioContent={deleteAudioContent}
+            />
         </td>
     </tr>
 )
