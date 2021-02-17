@@ -15,22 +15,6 @@ class AudioContentDescription extends React.Component {
         }
     }
 
-    getDate(date) {
-        const dd = String(date.getDate()).padStart(2, '0');
-        const mm = String(date.getMonth() + 1).padStart(2, '0');
-        const yyyy = date.getFullYear();
-
-        return mm + '/' + dd + '/' + yyyy;
-    }
-
-    getDuration(date) {
-        const hours = String(date.getUTCHours()).padStart(2, '0')
-        const minutes = String(date.getUTCMinutes()).padStart(2, '0')
-        const seconds = String(date.getSeconds()).padStart(2, '0')
-
-        return `${hours}h ${minutes}m ${seconds}s` 
-    }
-
     toggleForm() {
         this.setState(prevState => ({
             ...prevState,
@@ -108,13 +92,13 @@ class AudioContentDescription extends React.Component {
                     </Modal.Header>
                     <Modal.Body>
                         <Row>
-                            <Col sm={4}>
+                            <Col lg={4}>
                                 <img className='img-fluid' 
                                     src={this.state.book.fields.cover['es-MX']} 
                                     alt={this.state.book.fields.title['es-MX']}
                                 />
                             </Col>
-                            <Col sm={8}>
+                            <Col lg={8}>
                                 <AudioContentForm
                                     onSubmitForm={this.onSubmitForm.bind(this)}
                                     book={this.state.book}

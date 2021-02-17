@@ -38,24 +38,26 @@ class Bar extends React.Component{
                     limit={this.props.audioContent.limit ? this.props.audioContent.limit : 100}
                     total={this.props.audioContent.total}
                 />
-                <Row className="justify-content-md-around">
-                    <Col md={7} className='text-left ml-xs-0'>
+                <Row>
+                    <Col xs={12} md={8} className='mb-2'>
                         <Form inline>
-                            <FormControl type="text" placeholder="Search" className="col-10 mr-sm-0" 
+                            <FormControl className='col-10' type="text" placeholder="Search" 
                                 onChange={this.handleSearchfield.bind(this)} value={this.state.searchString}
                             />
-                            <Button variant="warning" onClick={this.filterContent.bind(this)}> Search </Button>
+                            <Button className='col-2' variant="warning" onClick={this.filterContent.bind(this)}> 
+                                <i className="fas fa-search"></i>
+                            </Button>
                         </Form>
                     </Col>
-                    <Col className='ml-xs-0'>
+                    <Col xs={12} md={2} className='mb-2'>
                         <Button variant='warning' onClick={this.props.resetFilter} disabled={
                             this.props.audioContent.total === this.props.audioContentFiltered.total
-                        }> 
+                        } block> 
                             Reset Filter
                         </Button>
                     </Col>
-                    <Col className='text-right mr-xs-0'>
-                        <AddAudioContent 
+                    <Col xs={12} md={2} className='mb-2'>
+                        <AddAudioContent
                             addAudioContent={this.props.addAudioContent}
                             setModalShow={this.props.setModalShow}
                             limit={this.props.audioContent.limit}

@@ -55,11 +55,12 @@ class AddAudioContent extends React.Component {
     
     render() {
         return (
-            <Container>
+            <React.Fragment>
                 <Button variant='alert' className='btn-outline-success' onClick={this.toggleForm.bind(this)}
                     disabled={this.props.limit === this.props.total}
+                    block
                 > 
-                    Add Audiocontent
+                    Add Book
                 </Button>
                 
                 <Modal show={this.state.show} 
@@ -91,7 +92,7 @@ class AddAudioContent extends React.Component {
                         </AudioContentForm>
                     </Modal.Body>
                 </Modal>
-            </Container>
+            </React.Fragment>
         )
     }
 }

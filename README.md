@@ -19,7 +19,7 @@ cd junior-beek-frontend-challenge
 
 #### install dependencies
 ```
-npm -i
+npm i
 ```
 
 #### run application

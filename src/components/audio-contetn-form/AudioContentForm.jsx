@@ -15,7 +15,7 @@ class AudioContentForm extends React.Component {
 
     handleFieldChange(field, data, type) {
         if(type === 'number' )
-        data = parseInt(data)
+        data = Math.abs(parseInt(data))
 
         this.setState(prevState => ({
             ...prevState,
