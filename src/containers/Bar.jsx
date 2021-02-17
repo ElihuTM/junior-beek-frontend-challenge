@@ -12,8 +12,8 @@ class Bar extends React.Component{
         }
     }
 
-    handleSearchfield(text) {
-        this.setState({ searchString: text })
+    handleSearchfield(event) {
+        this.setState({ searchString: event.target.value })
     }
 
     filterContent() {
@@ -23,9 +23,10 @@ class Bar extends React.Component{
         fetch(API, API_CONFIG)
         .then(response => response.json())
         .catch(error => console.error(error))
-        .then(data => console.log(data))
+        .then(data => this.props.filterContent(data))
 
-        this.setState({ searchString: '' })
+        this.setState({searchString: ''})
+
     }
 
     render() {
@@ -36,15 +37,22 @@ class Bar extends React.Component{
                     total={this.props.audioContent.total}
                 />
                 <Row className="justify-content-md-around">
-                    <Col md={8} className='text-left ml-xs-0'>
+                    <Col md={7} className='text-left ml-xs-0'>
                         <Form inline>
-                            <FormControl type="text" placeholder="Search" className="col-8 mr-sm-0" 
-                                onChange={this.handleSearchfield.bind(this)}
+                            <FormControl type="text" placeholder="Search" className="col-10 mr-sm-0" 
+                                onChange={this.handleSearchfield.bind(this)} value={this.state.searchString}
                             />
-                            <Button variant="outline-success" onClick={this.filterContent.bind(this)}> Search </Button>
+                            <Button variant="warning" onClick={this.filterContent.bind(this)}> Search </Button>
                         </Form>
                     </Col>
-                    <Col md={3} className='text-right mr-xs-0'>
+                    <Col className='ml-xs-0'>
+                        <Button variant='warning' onClick={this.props.resetFilter} disabled={
+                            this.props.audioContent.total === this.props.audioContentFiltered.total
+                        }> 
+                            Reset Filter
+                        </Button>
+                    </Col>
+                    <Col className='text-right mr-xs-0'>
                         <AddAudioContent 
                             addAudioContent={this.props.addAudioContent}
                             limit={this.props.audioContent.limit}

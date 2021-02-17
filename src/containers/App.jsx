@@ -1,5 +1,4 @@
 import React from 'react'
-
 import Header from '../components/Header'
 import AudioContentTable from '../components/AudioContentTable'
 import APIUtils from '../APIUtils'
@@ -10,6 +9,7 @@ class App extends React.Component {
         super(props)
         this.state = {
             audioContent: false,
+            audioContentFiltered: false,
         }
     }
 
@@ -22,25 +22,40 @@ class App extends React.Component {
         .catch(error => console.error(error))
         .then(data => this.setState({
             audioContent: data,
+            audioContentFiltered: data,
         }))
     }
 
     addAudioContent(book) {
         this.setState(prevState => ({
+            ...prevState,
             audioContent: {
                 ...prevState.audioContent,
                 total: prevState.audioContent.total + 1,   
                 items: [book, ...prevState.audioContent.items]
-            }
+            },
+            audioContentFiltered: {
+                ...prevState.audioContentFiltered,
+                total: prevState.audioContentFiltered.total + 1,
+                items: [book, ...prevState.audioContentFiltered.items]
+            },
         }))
     }
     
     deleteAudioContent(id) {
         this.setState(prevState => ({
+            ...prevState,
             audioContent: {
                 ...prevState.audioContent,
                 total: prevState.audioContent.total - 1,
                 items: prevState.audioContent.items.filter(
+                    book => book.sys.id != id
+                )
+            },
+            audioContentFiltered: {
+                ...prevState.audioContentFiltered,
+                total: prevState.audioContentFiltered.total - 1,
+                items: prevState.audioContentFiltered.items.filter(
                     book => book.sys.id != id
                 )
             }
@@ -48,20 +63,33 @@ class App extends React.Component {
     }
 
     filterContent(data) {
-        this.setState({
-            audioContent: data
-        })
+        this.setState( prevState => ({
+            ...prevState,
+            audioContentFiltered: data,
+        }))
+    }
+
+    resetFilter() {
+        this.setState(prevState => ({
+            ...prevState,
+            audioContentFiltered: prevState.audioContent
+        }))
     }
 
     updateAudioContent(id, data) {
         this.setState(prevState => ({
+            ...prevState,
             audioContent: {
                 ...prevState.audioContent,
-                items: prevState.audioContent.items.map(book => {
-                    if(book.sys.id === id)
-                        return data
-                    return book
-                })
+                items: prevState.audioContent.items.map(
+                    book => book.sys.id === id ? data : book
+                )
+            },
+            audioContentFiltered: {
+                ...prevState.audioContentFiltered,
+                items: prevState.audioContentFiltered.items.map(
+                    book => book.sys.id === id ? data : book
+                )
             }
         }))
     }
@@ -73,11 +101,13 @@ class App extends React.Component {
                 <Bar
                     addAudioContent={this.addAudioContent.bind(this)}
                     filterContent={this.filterContent.bind(this)}
+                    resetFilter={this.resetFilter.bind(this)}
                     audioContent={this.state.audioContent}
+                    audioContentFiltered={this.state.audioContentFiltered}
                 />
                 <hr/>
                 <AudioContentTable 
-                    audioContent={this.state.audioContent}
+                    audioContent={this.state.audioContentFiltered}
                     deleteAudioContent={this.deleteAudioContent.bind(this)}
                     updateAudioContent={this.updateAudioContent.bind(this)}
                 />

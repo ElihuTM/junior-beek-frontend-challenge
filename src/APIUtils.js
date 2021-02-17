@@ -10,7 +10,7 @@ class APIUtils {
     }
 
     getSearchAudioBooksConfig(searchString) {
-        const API = `${this.URL}?query=${searchString}&select=fields,sys.id&locale=es-MX`
+        const API = `${this.URL}?query=${searchString}&select=fields,sys.id&locale=es-MX&content_type=${this.CONTENT_TYPE_ID}`
         const API_CONFIG = {
             "method": "GET",
             "headers": {
@@ -21,7 +21,7 @@ class APIUtils {
         return [API, API_CONFIG]
     }
 
-    getSingleAudioBook(objectId, observerState) {
+    getSingleAudioBookConfig(objectId) {
         const API = `${this.URL}?sys.id=${objectId}&select=fields,sys.id,sys.version&locale=es-MX`
         const API_CONFIG = {
             "method": "GET",
@@ -30,7 +30,7 @@ class APIUtils {
             }
         }
 
-        this.callAPI(API, API_CONFIG, observerState)
+        return [API, API_CONFIG]
     }
 
     getRetrieveAudioBooksConfig() {

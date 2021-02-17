@@ -1,5 +1,4 @@
 import React from 'react'
-
 import {Form, Col, Row} from 'react-bootstrap'
 import GeneralFieldForm from './GeneralFieldForm'
 import ArrayFieldForm from './ArrayFieldForm'
