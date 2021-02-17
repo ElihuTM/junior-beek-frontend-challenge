@@ -2,7 +2,7 @@ import React from 'react'
 import Table from 'react-bootstrap/Table'
 import AudioContentItem from './AudioContentItem'
 
-const AudioContentTable = ({audioContent, deleteAudioContent}) => (
+const AudioContentTable = ({audioContent, deleteAudioContent, updateAudioContent}) => (
     <main className='container'>
         <p className='grey-color mb-1'> {audioContent.total} entries found </p>
         <Table striped bordered hover>
@@ -17,11 +17,12 @@ const AudioContentTable = ({audioContent, deleteAudioContent}) => (
             </thead>
             <tbody>
                 {audioContent ? (
-                    audioContent.items.map((book,idx) => 
+                    audioContent.items.map((book,idx) =>
                         <AudioContentItem
                             key={book.sys.id}
                             idx={idx+1} 
                             deleteAudioContent={deleteAudioContent}
+                            updateAudioContent={updateAudioContent}
                             book={book}
                         />
                     )

@@ -1,8 +1,5 @@
 import React from 'react'
-
-import {Button, Container, Modal, Form, Col, Row } from 'react-bootstrap'
-import GeneralFieldForm from '../components/audio-contetn-form/GeneralFieldForm'
-import ArrayFieldForm from '../components/audio-contetn-form/ArrayFieldForm'
+import {Button, Container, Modal} from 'react-bootstrap'
 import AudioContentForm from '../components/audio-contetn-form/AudioContentForm'
 import APIUtils from '../APIUtils'
 
@@ -12,8 +9,15 @@ class AddAudioContent extends React.Component {
         this.state = {
             book: APIUtils.getBookBody(),
             show: false,
-            validated: false,
+            reading: false,
         }
+    }
+
+    toogleReading() {
+        this.setState(prevState => ({
+            ...prevState,
+            reading: !prevState.reading
+        }))
     }
 
     toggleForm() {
@@ -27,58 +31,27 @@ class AddAudioContent extends React.Component {
         this.setState({
             book: APIUtils.getBookBody(),
             show: false,
-            validated: false,
         })
     }
 
-    setValidated(value){
-        this.setState(prevState => ({
-            ...prevState,
-            validated: value,
-        }))
-    }
-
-    handleFieldChange(field, data, type) {
-        if(type === 'number' )
-        data = parseInt(data)
-
-        this.setState(prevState => ({
-            ...prevState,
-            book:{
-                fields: {
-                    ...prevState.book.fields,
-                    [field]: {
-                        "es-MX": data
-                    }
-                }
-            }
-        }))
-    }
-    
-    submitForm(event){
-        const form = event.currentTarget;
-        event.preventDefault();
-        event.stopPropagation();
-
-        if (form.checkValidity() === true) {
-            const api = new APIUtils()
-            const [API, API_CONFIG] = api.getCreateAudioBookConfig(this.state.book)
-            
-            fetch(API, API_CONFIG)
-            .then((response) => response.json())
-            .catch(error => console.error(error))
-            .then((data) => this.props.addAudioContent(data))
-            
-            this.resetForm()
-        } else {
-            this.setValidated(true);
-        }
+    onSubmitForm(data){
+        const api = new APIUtils()
+        const [API, API_CONFIG] = api.getCreateAudioBookConfig(data)
+        
+        fetch(API, API_CONFIG)
+        .then((response) => response.json())
+        .catch(error => console.error(error))
+        .then((data) => this.props.addAudioContent(data))
+        
+        this.resetForm()
     }
     
     render() {
         return (
             <Container>
-                <Button variant='alert' className='btn-outline-success' onClick={this.toggleForm.bind(this)}> 
+                <Button variant='alert' className='btn-outline-success' onClick={this.toggleForm.bind(this)}
+                    disabled={this.props.limit === this.props.total}
+                > 
                     Add Audiocontent
                 </Button>
                 
@@ -95,12 +68,20 @@ class AddAudioContent extends React.Component {
                     </Modal.Header>
                     <Modal.Body>
                         <AudioContentForm
-                            submitForm={this.submitForm.bind(this)}
-                            handleFieldChange={this.handleFieldChange.bind(this)}
-                            resetForm={this.resetForm.bind(this)}
-                            validated={this.state.validated}
+                            onSubmitForm={this.onSubmitForm.bind(this)}
                             book={this.state.book}
-                        />
+                            reading={this.state.reading}
+                        >
+
+                        <Container className='row justify-content-end mt-xs-3'>
+                            <Button className='col-3 mr-3' variant="secondary" onClick={this.resetForm.bind(this)}>
+                                Cancel
+                            </Button>
+                            <Button className='col-3' type='submit' variant="primary">
+                                Create
+                            </Button>
+                        </Container>
+                        </AudioContentForm>
                     </Modal.Body>
                 </Modal>
             </Container>

@@ -53,6 +53,19 @@ class App extends React.Component {
         })
     }
 
+    updateAudioContent(id, data) {
+        this.setState(prevState => ({
+            audioContent: {
+                ...prevState.audioContent,
+                items: prevState.audioContent.items.map(book => {
+                    if(book.sys.id === id)
+                        return data
+                    return book
+                })
+            }
+        }))
+    }
+
     render() {
         return (
             <div className='App'>
@@ -60,11 +73,13 @@ class App extends React.Component {
                 <Bar
                     addAudioContent={this.addAudioContent.bind(this)}
                     filterContent={this.filterContent.bind(this)}
+                    audioContent={this.state.audioContent}
                 />
                 <hr/>
                 <AudioContentTable 
                     audioContent={this.state.audioContent}
                     deleteAudioContent={this.deleteAudioContent.bind(this)}
+                    updateAudioContent={this.updateAudioContent.bind(this)}
                 />
             </div>
         )

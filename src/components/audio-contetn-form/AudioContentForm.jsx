@@ -1,106 +1,144 @@
 import React from 'react'
 
-import {Form, Col, Row, Button} from 'react-bootstrap'
+import {Form, Col, Row} from 'react-bootstrap'
 import GeneralFieldForm from './GeneralFieldForm'
 import ArrayFieldForm from './ArrayFieldForm'
+import IsOriginalFieldForm from './IsOriginalFieldForm'
 
-const AudioContentForm = (props) => (
-    <Form className='p-lg-4'noValidate validated={props.validated} onSubmit={props.submitForm}>
-        <Form.Group as={Row} controlId='formContentType'>
-            <Form.Label column sm='4' className='h6'> Type of content: </Form.Label>
-            <Col>
-                <Form.Control plaintext readOnly defaultValue='audio content'/>
-            </Col>
-        </Form.Group>
+class AudioContentForm extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            book: this.props.book,
+            validated: false,
+        }
+    }
 
-        <Form.Group as={Row} controlId='formLanguage'>
-            <Form.Label column sm='4' className='h6'> Language: </Form.Label>
-            <Col>
-                <Form.Control plaintext readOnly defaultValue='es-MX'/>
-            </Col>
-        </Form.Group>
-        <hr/>
-        
-        <Form.Group as={Row} controlId='formIsOriginal'>
-            <Form.Label as="legend" md={6} column className='h6'>
-                Is the Audio Content Original?
-            </Form.Label>
-            <Col className='mt-2'>
-                <Form.Check
-                    type="radio"
-                    label="yes"
-                    name="is_original"
-                    id="is-original"
-                    value={true}
-                    required
-                    onChange={() => console.log(true)}
+    handleFieldChange(field, data, type) {
+        if(type === 'number' )
+        data = parseInt(data)
+
+        this.setState(prevState => ({
+            ...prevState,
+            book:{
+                ...prevState.book,
+                fields: {
+                    ...prevState.book.fields,
+                    [field]: {
+                        "es-MX": data
+                    }
+                }
+            }
+        }))
+    }
+
+    setValidated(value){
+        this.setState(prevState => ({
+            ...prevState,
+            validated: value,
+        }))
+    }
+
+    submitForm(event) {
+        const form = event.currentTarget
+        event.preventDefault()
+        event.stopPropagation()
+
+        if (form.checkValidity() === true)
+            this.props.onSubmitForm(this.state.book)
+        else
+            this.setValidated(true);
+    }
+
+    render() {
+        return(
+            <Form className='p-lg-4' noValidate validated={this.state.validated} onSubmit={this.submitForm.bind(this)}>
+                <Form.Group as={Row} controlId='formContentType'>
+                    <Form.Label column sm='4' className='h6'> Type of content: </Form.Label>
+                    <Col>
+                        <Form.Control plaintext readOnly defaultValue='audio content'/>
+                    </Col>
+                </Form.Group>
+
+                <Form.Group as={Row} controlId='formLanguage'>
+                    <Form.Label column sm='4' className='h6'> Language: </Form.Label>
+                    <Col>
+                        <Form.Control plaintext readOnly defaultValue='es-MX'/>
+                    </Col>
+                </Form.Group>
+                <hr/>
+                
+                <IsOriginalFieldForm
+                    reading={this.props.reading}
+                    name='is_original'
+                    handleFieldChange={this.handleFieldChange.bind(this)}
+                    defaultValue={this.state.book.fields.is_original['es-MX']}
                 />
-            </Col>
-            <Col className='mt-2'>
-                <Form.Check
-                    type="radio"
-                    label="No"
-                    name="is_original"
-                    id="is-not-original"
-                    value={false}
-                    onChange={() => console.log(false)}
+
+                <GeneralFieldForm
+                    reading={this.props.reading}
+                    name='title'
+                    type= 'text'
+                    handleFieldChange={this.handleFieldChange.bind(this)}
+                    defaultValue={this.state.book.fields.title['es-MX']}
                 />
-            </Col>
-        </Form.Group>
 
-        <GeneralFieldForm
-            name='title'
-            type= 'text'
-            handleFieldChange={props.handleFieldChange}
-        />
+                <GeneralFieldForm
+                    hidden={this.props.reading}
+                    reading={this.props.reading}
+                    name='cover'
+                    label='URL Cover'
+                    type='text'
+                    placeholder='enter an URL'
+                    handleFieldChange={this.handleFieldChange.bind(this)}
+                    defaultValue={this.state.book.fields.cover['es-MX']}
 
-        <GeneralFieldForm
-            name='cover'
-            label='URL Cover'
-            type='text'
-            placeholder='enter an URL'
-            handleFieldChange={props.handleFieldChange}
-        />
+                />
 
-        <ArrayFieldForm
-            name='authors'
-            book={props.book}
-            handleFieldChange={props.handleFieldChange}
-        />
+                <ArrayFieldForm
+                    name='authors'
+                    book={this.state.book}
+                    handleFieldChange={this.handleFieldChange.bind(this)}
+                    reading={this.props.reading}
+                />
 
-        <ArrayFieldForm
-            name='narrators'
-            book={props.book}
-            handleFieldChange={props.handleFieldChange}
-        />
+                <ArrayFieldForm
+                    name='narrators'
+                    book={this.state.book}
+                    handleFieldChange={this.handleFieldChange.bind(this)}
+                    reading={this.props.reading}
+                />
 
-        <GeneralFieldForm
-            name='street_date'
-            type='date'
-            placeholder='mm/dd/yyyy'
-            handleFieldChange={props.handleFieldChange}
-            feedbackInvalid='please enter a valid date'
-        />
+                <GeneralFieldForm
+                    reading={this.props.reading}
+                    name='street_date'
+                    type='date'
+                    placeholder='mm/dd/yyyy'
+                    handleFieldChange={this.handleFieldChange.bind(this)}
+                    feedbackInvalid='please enter a valid date'
+                    defaultValue={this.state.book.fields.street_date['es-MX']}
+                />
 
-        <GeneralFieldForm
-            name='cost_per_play'
-            type='number'
-            handleFieldChange={props.handleFieldChange}
-        />
+                <GeneralFieldForm
+                    reading={this.props.reading}
+                    name='cost_per_play'
+                    type='number'
+                    handleFieldChange={this.handleFieldChange.bind(this)}
+                    defaultValue={this.state.book.fields.cost_per_play['es-MX']}
+                />
 
-        <GeneralFieldForm
-            name='duration'
-            type='number'
-            handleFieldChange={props.handleFieldChange}
-        />
+                <GeneralFieldForm
+                    reading={this.props.reading}
+                    name='duration'
+                    type='number'
+                    handleFieldChange={this.handleFieldChange.bind(this)}
+                    defaultValue={this.state.book.fields.duration['es-MX']}
+                />
 
-        <Button type='submit' variant="success">
-            Create
-        </Button>
-        <Button variant="secondary" onClick={props.resetForm}>
-            Cancel
-        </Button>
-    </Form>
-)
+                {this.props.children}
+            </Form>
+        )
+    }
+}
 
 export default AudioContentForm

@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react'
-import {Button, Container, Modal, Row, Col, Form} from 'react-bootstrap'
-import shortid from 'shortid'
+import React from 'react'
+import {Button, Container, Modal, Row, Col} from 'react-bootstrap'
+import AudioContentForm from '../components/audio-contetn-form/AudioContentForm'
 import APIUtils from '../APIUtils'
 
 class AudioContentDescription extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            ...this.props.book.fields,
+            book: this.props.book,
             show: false,
-            delete_result: false,
+            reading: true
         }
     }
 
@@ -36,17 +36,51 @@ class AudioContentDescription extends React.Component {
         }))
     }
 
+    toggleReading() {
+        this.setState(prevState => ({
+            ...prevState,
+            reading: !prevState.reading
+        }))
+    }
+
+    handleBook(book) {
+        this.setState(prevState => ({
+            ...prevState,
+            book: {
+                ...book,
+                sys: {
+                    ...prevState.book.sys,
+                    version: prevState.book.sys.version + 1
+                }
+            }
+        }))
+    }
+
     deleteAudioContentClick(id) {
         const api = new APIUtils()
         const [API, API_CONFIG] = api.getDeleteAudioBookConfig(id)
-
+        this.toggleForm()
+        
         fetch(API, API_CONFIG)
         .then(response => {
             if(response.ok === true)
                 this.props.deleteAudioContent(id)
         }).catch(error => console.error(error))
+    }
 
-        this.toggleForm()
+    onSubmitForm(book) {
+        const api = new APIUtils()
+        const [API, API_CONFIG] = api.getUpdateAudioBookConfig(
+            {...book}, book.sys.id, this.state.book.sys.version
+        )
+
+        this.handleBook(book)
+        this.toggleReading()
+        
+        fetch(API, API_CONFIG)
+        .then(response => response.json())
+        .catch(error => console.error(error))
+        .then(data => this.props.updateAudioContent(data.sys.id, data))
     }
 
     render() {
@@ -64,65 +98,55 @@ class AudioContentDescription extends React.Component {
                 >
                     <Modal.Header closeButton>
                         <Modal.Title className='text-center'> 
-                            {this.state.title['es-MX']} {this.state.is_original['es-MX'] ? '(Original)' : '(Not Original)'} 
+                            {this.state.book.fields.title['es-MX']} {this.state.book.fields.is_original['es-MX'] ? '(Original)' : '(Not Original)'} 
                         </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <Row>
-                            <Col sm={6}>
+                            <Col sm={4}>
                                 <img className='img-fluid' 
-                                    src={this.state.cover['es-MX']} 
-                                    alt={this.state.title['es-MX']}
+                                    src={this.state.book.fields.cover['es-MX']} 
+                                    alt={this.state.book.fields.title['es-MX']}
                                 />
                             </Col>
-                            <Col sm={6}>
-                                <Form>
-                                    <Form.Group controlId='formTitle' >
-                                        <Form.Label className='h6'> Title </Form.Label>
-                                        <Form.Control plaintext readOnly defaultValue={this.state.title['es-MX']} />
-                                    </Form.Group>
-                                    <Form.Group controlId='formAuthor'>
-                                        <Form.Label className='h6'> Authors </Form.Label>
-                                        {this.state.authors['es-MX'].map(author =>
-                                            <Form.Control key={shortid.generate()} plaintext readOnly defaultValue={author} />
-                                        )}
-                                    </Form.Group>
-                                    <Form.Group controlId='formNarrators'>
-                                        <Form.Label className='h6'> Narrators </Form.Label>
-                                        {this.state.narrators['es-MX'].map(narrator =>
-                                            <Form.Control key={shortid.generate()} plaintext readOnly defaultValue={narrator} />
-                                        )}
-                                    </Form.Group>
-                                    <Form.Group controlId='formStreetDate'>
-                                        <Form.Label className='h6'> StreetDate (mm/dd/yyyy)</Form.Label>
-                                        <Form.Control plaintext readOnly defaultValue={this.getDate(new Date(this.state.street_date['es-MX']))} />
-                                    </Form.Group>
-                                    <Form.Group controlId='formCostPerDay'>
-                                        <Form.Label className='h6'> Cost per play </Form.Label>
-                                        <Form.Control plaintext readOnly defaultValue={'$' + this.state.cost_per_play['es-MX']} />
-                                    </Form.Group>
-                                    <Form.Group controlId='formDuration'>
-                                        <Form.Label className='h6'> Duration </Form.Label>
-                                        <Form.Control plaintext readOnly defaultValue={this.getDuration(new Date(this.state.duration['es-MX'] * 1000))} />
-                                    </Form.Group>
-                                </Form>
+                            <Col sm={8}>
+                                <AudioContentForm
+                                    onSubmitForm={this.onSubmitForm.bind(this)}
+                                    book={this.state.book}
+                                    reading={this.state.reading}
+                                >
+                                
+                                    <Container className='row justify-content-begin mt-xs-3'>
+                                        <Button className='mr-md-3' variant="secondary" 
+                                            onClick={this.toggleReading.bind(this)} hidden={this.state.reading} >
+                                            Cancel
+                                        </Button>
+                                        <Button variant="primary" type='submit' hidden={this.state.reading}>
+                                            Update
+                                        </Button>
+                                    </Container>
+                                    <Container className='row justify-content-end mt-xs-3'>
+                                        <Button className='mr-md-3' variant="secondary" 
+                                            onClick={this.toggleForm.bind(this)} hidden={!this.state.reading}>
+                                            Close
+                                        </Button>
+                                        <Button variant="warning" 
+                                            onClick={this.toggleReading.bind(this)} hidden={!this.state.reading}>
+                                            Update
+                                        </Button>
+                                        <Button className='ml-md-3' variant="danger" 
+                                            onClick={() => this.deleteAudioContentClick(this.props.book.sys.id)} hidden={!this.state.reading}>
+                                            Delete
+                                        </Button>
+                                    </Container>
+                                </AudioContentForm>
                             </Col>
                         </Row>
                     </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={this.toggleForm.bind(this)}>
-                            Close
-                        </Button>
-                        <Button variant="warning" onClick={this.toggleForm.bind(this)}>
-                            Update
-                        </Button>
-                        <Button variant="danger" onClick={() => this.deleteAudioContentClick(this.props.book.sys.id)}>
-                            Delete
-                        </Button>
-                    </Modal.Footer>
                 </Modal>
             </Container>
         )
     }
 }
+
 export default AudioContentDescription

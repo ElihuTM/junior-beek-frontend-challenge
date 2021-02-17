@@ -36,8 +36,10 @@ const ArrayFieldForm = (props) => {
                             />
                         </Col>
                         <Col className='pl-0'>
-                            <Button variant='danger' 
-                                onClick={() => handleDeletePerson(idx)}>
+                            <Button variant='danger'
+                                hidden={props.reading}
+                                onClick={() => handleDeletePerson(idx)}
+                            >
                                 X
                             </Button>
                         </Col>
@@ -48,7 +50,7 @@ const ArrayFieldForm = (props) => {
                 </Form.Control.Feedback>
             </Form.Group>
 
-            <Form.Group controlId={`AddForm${upperCase}`}>
+            <Form.Group controlId={`AddForm${upperCase}`} hidden={props.reading}>
                 <Row>
                     <Col xs={8} className='pr-0'>
                         <Form.Control
@@ -59,7 +61,7 @@ const ArrayFieldForm = (props) => {
                         />
                     </Col>
                     <Col className='pl-0'>
-                        <Button variant='primary' onClick={handlePersonChange}> 
+                        <Button variant='outline-primary' onClick={handlePersonChange}> 
                             {`Add ${singular}`}
                         </Button>
                     </Col>

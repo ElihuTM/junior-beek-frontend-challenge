@@ -1,6 +1,3 @@
-import React from 'react'
-import {useEffect, useState} from 'react'
-
 class APIUtils {
     constructor() {
         this.API_TOKEN = 'CFPAT-LBtveUvtDi7YjAhsyNzZURthngcrVnIr53eOZjYnxuc'
@@ -10,15 +7,6 @@ class APIUtils {
 
         this.BASE_URL = 'https://api.contentful.com'
         this.URL = `${this.BASE_URL}/spaces/${this.SPACE_ID}/environments/${this.ENVIRONMENT}/entries`
-    }
-
-    callAPI(API, API_CONFIG, observerState) {
-        useEffect(() => {
-          fetch(API, API_CONFIG)
-            .then((response) => response.json())
-            .catch(error => console.error(error))
-            .then((data) => observerState(data))
-        }, [])
     }
 
     getSearchAudioBooksConfig(searchString) {
@@ -31,11 +19,6 @@ class APIUtils {
         }
 
         return [API, API_CONFIG]
-    }
-
-    searchAudioBooks(searchString, observerState) {
-        const [API, API_CONFIG] = this.getSearchAudioBooksConfig(searchString)
-        this.callAPI(API, API_CONFIG, observerState)
     }
 
     getSingleAudioBook(objectId, observerState) {
@@ -61,11 +44,6 @@ class APIUtils {
         return [API, API_CONFIG]
     }
 
-    retrieveAudioBooks (observerState) {
-        const [API, API_CONFIG] = this.getRetrieveAudioBooksConfig()
-        this.callAPI(API, API_CONFIG, observerState)
-    }
-
     getDeleteAudioBookConfig(objectId) {
         const API = `${this.URL}/${objectId}`
         const API_CONFIG = {
@@ -77,18 +55,12 @@ class APIUtils {
         }
         return [API, API_CONFIG]
     }
-    
-    deleteAnAudioBook(objectId, observerState) {
-        const [API, API_CONFIG] = this.getDeleteAudioBookConfig(objectId)
-        this.callAPI(API, API_CONFIG, observerState)
-        
-    }
-    
-    updateAudioBook(data, objectId, version, observerState) {
+
+    getUpdateAudioBookConfig(data, objectId, version) {
         const book = JSON.stringify(data)
         const API = `${this.URL}/${objectId}`
         const API_CONFIG = {
-            "method": "POST",
+            "method": "PUT",
             "body": book,
             "headers": {
                 "Authorization" : `Bearer ${this.API_TOKEN}`,
@@ -97,8 +69,9 @@ class APIUtils {
             }
         }
 
-        this.callAPI(API, API_CONFIG, observerState)
+        return [API, API_CONFIG]
     }
+    
 
     getCreateAudioBookConfig(data) {
         const book = JSON.stringify(data)
@@ -113,11 +86,6 @@ class APIUtils {
         }
 
         return [API, API_CONFIG]
-    }
-
-    createAudioBook(data, observerState) {
-        const [API, API_CONFIG] = this.getCreateAudioBookConfig(data)
-        this.callAPI(API, API_CONFIG, observerState)
     }
 
     static getBookBody() {

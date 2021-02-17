@@ -2,6 +2,7 @@ import React from 'react'
 import { Row, Form, Button, FormControl, Col, Container } from 'react-bootstrap'
 import APIUtils from '../APIUtils'
 import AddAudioContent from './AddAudioContent'
+import LimitWarnig from '../components/LimitWarning'
 
 class Bar extends React.Component{
     constructor(props) {
@@ -30,6 +31,10 @@ class Bar extends React.Component{
     render() {
         return (
             <Container>
+                <LimitWarnig
+                    limit={this.props.audioContent.limit ? this.props.audioContent.limit : 100}
+                    total={this.props.audioContent.total}
+                />
                 <Row className="justify-content-md-around">
                     <Col md={8} className='text-left ml-xs-0'>
                         <Form inline>
@@ -40,7 +45,11 @@ class Bar extends React.Component{
                         </Form>
                     </Col>
                     <Col md={3} className='text-right mr-xs-0'>
-                        <AddAudioContent addAudioContent={this.props.addAudioContent}/>
+                        <AddAudioContent 
+                            addAudioContent={this.props.addAudioContent}
+                            limit={this.props.audioContent.limit}
+                            total={this.props.audioContent.total}
+                        />
                     </Col>
                 </Row>
             </Container>
