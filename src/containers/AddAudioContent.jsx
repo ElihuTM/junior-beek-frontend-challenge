@@ -1,6 +1,7 @@
 import React from 'react'
 import {Button, Container, Modal} from 'react-bootstrap'
 import AudioContentForm from '../components/audio-contetn-form/AudioContentForm'
+import LoadingAlert from '../components/LoadingAlert'
 import APIUtils from '../APIUtils'
 
 class AddAudioContent extends React.Component {
@@ -28,20 +29,26 @@ class AddAudioContent extends React.Component {
     }
 
     resetForm() {
-        this.setState({
+        this.setState( prevState => ({
+            ...prevState,
             book: APIUtils.getBookBody(),
             show: false,
-        })
+        }))
     }
 
     onSubmitForm(data){
         const api = new APIUtils()
         const [API, API_CONFIG] = api.getCreateAudioBookConfig(data)
+
+        this.props.setModalShow(true)
         
         fetch(API, API_CONFIG)
         .then((response) => response.json())
         .catch(error => console.error(error))
-        .then((data) => this.props.addAudioContent(data))
+        .then((data) => {
+            this.props.setModalShow(false)
+            this.props.addAudioContent(data)
+        })
         
         this.resetForm()
     }

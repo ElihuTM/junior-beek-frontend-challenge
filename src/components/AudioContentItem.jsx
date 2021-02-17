@@ -2,7 +2,7 @@ import React from 'react'
 import AudioContentDescription from '../containers/AudioContentDescription'
 import shortid from 'shortid'
 
-const AudioContentItem = ({idx, deleteAudioContent, updateAudioContent, book}) => (
+const AudioContentItem = ({idx, deleteAudioContent, updateAudioContent, book, setModalShow}) => (
     <tr>
         <td > {idx} </td>
         <td > {book.fields.title['es-MX']} </td>
@@ -25,6 +25,7 @@ const AudioContentItem = ({idx, deleteAudioContent, updateAudioContent, book}) =
                 book={book}
                 deleteAudioContent={deleteAudioContent}
                 updateAudioContent={updateAudioContent}
+                setModalShow={setModalShow}
             />
         </td>
     </tr>

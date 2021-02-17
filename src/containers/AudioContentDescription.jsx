@@ -1,6 +1,7 @@
 import React from 'react'
 import {Button, Container, Modal, Row, Col} from 'react-bootstrap'
 import AudioContentForm from '../components/audio-contetn-form/AudioContentForm'
+import LoadingAlert from '../components/LoadingAlert'
 import APIUtils from '../APIUtils'
 
 class AudioContentDescription extends React.Component {
@@ -9,7 +10,8 @@ class AudioContentDescription extends React.Component {
         this.state = {
             book: this.props.book,
             show: false,
-            reading: true
+            reading: true,
+            modalShow: false,
         }
     }
 
@@ -61,10 +63,13 @@ class AudioContentDescription extends React.Component {
         const [API, API_CONFIG] = api.getDeleteAudioBookConfig(id)
         this.toggleForm()
         
+        this.props.setModalShow(true)
+
         fetch(API, API_CONFIG)
         .then(response => {
             if(response.ok === true)
                 this.props.deleteAudioContent(id)
+            this.props.setModalShow(false)
         }).catch(error => console.error(error))
     }
 

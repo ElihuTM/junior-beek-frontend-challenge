@@ -1,6 +1,7 @@
 import React from 'react'
 import Header from '../components/Header'
 import AudioContentTable from '../components/AudioContentTable'
+import LoadingAlert from '../components/LoadingAlert'
 import APIUtils from '../APIUtils'
 import Bar from './Bar'
 
@@ -10,7 +11,15 @@ class App extends React.Component {
         this.state = {
             audioContent: false,
             audioContentFiltered: false,
+            modalShow: false,
         }
+    }
+
+    setModalShow(value) {
+        this.setState(prevState => ({
+            ...prevState,
+            modalShow: value,
+        }))
     }
 
     componentDidMount() {
@@ -97,11 +106,13 @@ class App extends React.Component {
     render() {
         return (
             <div className='App'>
+                <LoadingAlert modalShow={this.state.modalShow}/>
                 <Header />
                 <Bar
                     addAudioContent={this.addAudioContent.bind(this)}
                     filterContent={this.filterContent.bind(this)}
                     resetFilter={this.resetFilter.bind(this)}
+                    setModalShow={this.setModalShow.bind(this)}
                     audioContent={this.state.audioContent}
                     audioContentFiltered={this.state.audioContentFiltered}
                 />
@@ -110,6 +121,7 @@ class App extends React.Component {
                     audioContent={this.state.audioContentFiltered}
                     deleteAudioContent={this.deleteAudioContent.bind(this)}
                     updateAudioContent={this.updateAudioContent.bind(this)}
+                    setModalShow={this.setModalShow.bind(this)}
                 />
             </div>
         )

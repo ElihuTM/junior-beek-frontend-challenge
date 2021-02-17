@@ -20,6 +20,8 @@ class Bar extends React.Component{
         const api = new APIUtils()
         const [API, API_CONFIG] = api.getSearchAudioBooksConfig(this.state.searchString)
         
+        this.props.filterContent(false)
+        
         fetch(API, API_CONFIG)
         .then(response => response.json())
         .catch(error => console.error(error))
@@ -55,6 +57,7 @@ class Bar extends React.Component{
                     <Col className='text-right mr-xs-0'>
                         <AddAudioContent 
                             addAudioContent={this.props.addAudioContent}
+                            setModalShow={this.props.setModalShow}
                             limit={this.props.audioContent.limit}
                             total={this.props.audioContent.total}
                         />
